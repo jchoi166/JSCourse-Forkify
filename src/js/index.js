@@ -28,12 +28,17 @@ const controlSearch = async () => {
         searchView.clearInput()
         searchView.clearResults()
         renderLoader(elements.searchRes)
-        // 4. Search for recipies
+
+        try {// 4. Search for recipies
         await state.search.getResults()
 
         // 5. Render results on UI
         clearLoader()
         searchView.renderResults(state.search.results)
+        } catch (err) {
+            alert ('Something wrong with the search...')
+            clearLoader()
+        }
     }
 }
 
@@ -41,6 +46,7 @@ elements.searchForm.addEventListener('submit', e => {
     e.preventDefault()
     controlSearch()
 })
+
 
 elements.searchResPages.addEventListener('click', e => {
     const btn = e.target.closest('.btn-inline')
@@ -54,14 +60,39 @@ elements.searchResPages.addEventListener('click', e => {
 
 // RECIPE CONTROLLER
 
-const r = new Recipe(47746)
-r.getRecipe()
+const controlRecipe = async () => {
+    // Get ID from url
+    const id = window.location.hash.replace('#', '')
+    console.log(id)
+
+    if (id) {
+        // Prepare UI for changes
+
+        // Create new recipe object
+        state.recipe = new Recipe(id)
+
+        try {
+            // Get recipe data and parse ingredients
+            await state.recipe.getRecipe()
+            console.log(state.recipe.ingredients)
+            state.recipe.parseIngredients()
+
+            // Calculate servings and time
+            state.recipe.calcTime()
+            state.recipe.calcServings()
+
+            // Render recipe
+            console.log(state.recipe)
+        } catch (err) {
+            alert ('Error processing recipe')
+        }
+    }
+}
 
 
+// window.addEventListener('hashchange', controlRecipe)
+// window.addEventListener('load', controlRecipe)
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe))
 
 
-
-//still testin some shit
-//just testing commit lolz
-//second part of the commit lmaoo
-//just testing commit lolz
