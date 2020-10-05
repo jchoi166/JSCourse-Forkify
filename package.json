@@ -32,7 +32,9 @@
     "axios": "^0.20.0",
     "babel-polyfill": "^6.26.0",
     "core-js": "^3.6.5",
+    "fractional": "^1.0.0",
     "live-server": "^1.2.1",
-    "regenerator-runtime": "^0.13.7"
+    "regenerator-runtime": "^0.13.7",
+    "uniqid": "^5.2.0"
   }
 }
