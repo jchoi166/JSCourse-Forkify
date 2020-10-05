@@ -17,14 +17,14 @@ export const highlightedSelected = id => {
         el.classList.remove('results__link--active')
     })
     // using css class selector to select id based on href attribute class. add link active class to highlight grey
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active')
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active')
 }
 /** "Pasta with tomato and spinach"
 acc: 0 / acc + cur.length = 5 / newTitle = ["Pasta"]
 acc: 5 / acc + cur.length = 9 / newTitle = ["Pasta", "with"]
 acc: 9 / acc + cur.length = 15 / newTitle = ["Pasta", "with", "tomato"]
  */
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = []
     if (title.length > limit) {
         title.split(' ').reduce((acc, cur) => {
@@ -37,7 +37,6 @@ const limitRecipeTitle = (title, limit = 17) => {
         return `${newTitle.join(' ')} ...)`
     }
     return title
-
 }
 const renderRecipe = recipe => {
     const markup = `
