@@ -5,6 +5,7 @@ import Likes from './models/Likes'
 import * as searchView from './views/searchView'
 import * as recipeView from './views/recipeView'
 import * as listView from './views/listView'
+import * as likesView from './views/likesView'
 import { elements, renderLoader, clearLoader } from './views/base'
 /**Global state of the app
  * - Search object
@@ -15,8 +16,6 @@ import { elements, renderLoader, clearLoader } from './views/base'
 
 const state = {
 }
-window.state = state
-
 
 // SEARCH CONTROLLER
 
@@ -67,7 +66,6 @@ elements.searchResPages.addEventListener('click', e => {
 const controlRecipe = async () => {
     // Get ID from url
     const id = window.location.hash.replace('#', '')
-    console.log(id)
 
     if (id) {
         // Prepare UI for changes
@@ -91,8 +89,12 @@ const controlRecipe = async () => {
 
             // Render recipe
             clearLoader()
-            console.log(state.recipe)
-            recipeView.renderRecipe(state.recipe)
+            recipeView.renderRecipe(
+                state.recipe,
+                state.likes.isLiked(id)
+                )
+
+
         } catch (err) {
             alert ('Error processing recipe')
         }
@@ -100,6 +102,7 @@ const controlRecipe = async () => {
 }
 
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe))
+
 
 // List Controller
 
@@ -134,6 +137,8 @@ elements.shopping.addEventListener('click', e => {
 })
 
 // Like Controller
+
+
 const controlLike = () => {
     if(!state.likes) state.likes = new Likes() 
     const currentID = state.recipe.id
@@ -149,20 +154,40 @@ const controlLike = () => {
             state.recipe.img
         )
         // Toggle the like button
+            likesView.toggleLikeBtn(true)
 
         // Add like to the UI list
+        likesView.renderLike(newLike)
         console.log(state.likes)
 
     // User HAS liked current recipe
     } else {
         // Remove like from the state
         state.likes.deleteLike(currentID)
+        
         // Toggle the like button
+        likesView.toggleLikeBtn(false)
 
         // Remove like from UI list
+        likesView.deleteLike(currentID)
         console.log(state.likes)
     }
+    likesView.toggleLikeMenu(state.likes.getNumLikes())
 }
+
+// Restore like recipes on page load
+window.addEventListener('load', () => {
+    state.likes = new Likes()
+
+    // Restore likes
+    state.likes.readStorage()
+
+    // Toggle like menu button
+    likesView.toggleLikeMenu(state.likes.getNumLikes())
+
+    // Render the existing likes
+    state.likes.likes.forEach(like => likesView.renderLike(like))
+})
 
 // Handling recipe button clicks
 elements.recipe.addEventListener('click', e => {
@@ -184,5 +209,3 @@ elements.recipe.addEventListener('click', e => {
         controlLike()
     }
 })
-
-window.l = new List()
